@@ -1,0 +1,6 @@
+pandas
+numpy
+librosa
+matplotlib
+boto3
+pydub

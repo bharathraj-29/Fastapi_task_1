@@ -3,6 +3,14 @@ from sqlalchemy.orm import relationship
 from database import base
 import uuid
 
+class Role(base):
+    __tablename__ = "roles"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    role = Column(String(50),unique=True)
+
+    users = relationship("User", back_populates="role")
+
 class User(base):
     __tablename__ = 'users'
 
@@ -10,10 +18,13 @@ class User(base):
     user_id = Column(CHAR(36), unique=True, default=lambda: str(uuid.uuid4()))
     name = Column(String(50))
     address = Column(String(100))
-    email = Column(String(100))
+    email = Column(String(100), unique = True)
     password = Column(String(200))
     ph_no = Column(BigInteger)
-    role = Column(String(50))
+
+    role_id = Column(Integer, ForeignKey("roles.id"))
+
+    role = relationship("Role", back_populates="users")
 
     # item_id = Column(Integer, ForeignKey('items.id'))
 
@@ -28,7 +39,7 @@ class Items(base):
     pro_id = Column(Integer)
     item_name = Column(String(50))
     product = Column(String(50))
-    quan_and_qual = Column(String(50))
+    quantity = Column(String(50))
     price = Column(String(50))
 
     # user_id = Column(CHAR(36), ForeignKey('users.user_id'))
@@ -47,17 +58,6 @@ class Orders(base):
 
     user = relationship('User', back_populates='orders')
     item= relationship('Items', back_populates='ordered')
-    delivery = relationship('verify_otp', back_populates='deliver')
 
-class verify_otp(base):
-    __tablename__ = 'OTP'
-
-    id = Column(Integer, primary_key=True, index=True)
-    delivered = Column(String(50))
-    otp = Column(Integer, nullable=True)
-    otp_expiry = Column(DateTime, nullable=True)
-    order_id = Column(Integer, ForeignKey("orders.id"))
-
-    deliver = relationship('Orders',back_populates='delivery')
 
 

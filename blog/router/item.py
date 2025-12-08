@@ -1,8 +1,9 @@
 from fastapi import APIRouter,Depends,HTTPException
 import schemas,models,database
 from sqlalchemy.orm import Session
-from blog.repository import item
+from blog.repository import item_repo
 from typing import List
+from blog import oauth2
 
 router=APIRouter(
     prefix='/items',
@@ -10,21 +11,21 @@ router=APIRouter(
 )
 
 @router.post('/post',response_model=schemas.itemcreate)
-def create(request:schemas.itemcreate,db:Session=Depends(database.get_db)):
-    return item.create(request,db)
+def create_item(request:schemas.itemcreate,db:Session=Depends(database.get_db),current_user = Depends(oauth2.admin_required())):
+    return item_repo.create_item(request,db,current_user)
 
 @router.get('/get',response_model=list[schemas.itemcreate])
-def show(db:Session=Depends(database.get_db)):
-    return item.show(db)
+def show_item(db:Session=Depends(database.get_db),current_user = Depends(oauth2.get_current_user)):
+    return item_repo.show_item(db,current_user)
 
-@router.get('/get/{id}',response_model=list[schemas.itemcreate])
-def showid(pro_id:int,item_name:str,db:Session=Depends(database.get_db)):
-    return item.showid(pro_id,item_name,db)
+# @router.get('/get/{id}',response_model=list[schemas.itemcreate])
+# def showid(pro_id:int,item_name:str,db:Session=Depends(database.get_db)):
+#     return item.showid(pro_id,item_name,db)
 
 @router.put('/put/{id}')
-def update(id:int,request:schemas.itemcreate,db:Session=Depends(database.get_db)):
-    return item.update(id,request,db)
+def update_item(id:int,request:schemas.itemcreate,db:Session=Depends(database.get_db),current_user = Depends(oauth2.get_current_user)):
+    return item_repo.update_item(id,request,db,current_user)
 
 @router.delete('/del/{id}')
-def delete(id:int,db:Session=Depends(database.get_db)):
-    return item.delete(id,db)
+def delete_item(id:int,db:Session=Depends(database.get_db),current_user = Depends(oauth2.get_current_user)):
+    return item_repo.delete_item(id,db,current_user)

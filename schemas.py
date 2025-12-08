@@ -1,5 +1,5 @@
 from pydantic import BaseModel,EmailStr
-from typing import Optional
+from typing import Optional,Literal
 from datetime import datetime
 
 class itembase(BaseModel):
@@ -10,7 +10,7 @@ class itembase(BaseModel):
 class itemcreate(itembase):
     pro_id:int
     # user_id: int
-    quan_and_qual:str
+    quantity:str
 
     class Config:
         orm_mode = True
@@ -20,11 +20,11 @@ class Userbase(BaseModel):
     name:str
     ph_no:int
     address:str
-    role:str
 
 class UserCreate(Userbase):
     email:EmailStr
     password:str
+    role: Literal["user", "admin", "org"] = "user"
 
     class Config:
         orm_mode = True
@@ -49,21 +49,7 @@ class OrderResponse(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class verify_OTP(BaseModel):
-    order_id:int
-    otp:int
-
-
-class OrderOTPRequest(BaseModel):
-    order_id: int
-
-
-class order_delivery(BaseModel):
-    otp:int
-    otp_expiry:datetime
-    delivered:str
+        
 
 class login(BaseModel):
     email:EmailStr
