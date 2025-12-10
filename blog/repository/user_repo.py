@@ -23,7 +23,6 @@ def create_user(request: schemas.UserCreate, db: Session):
   return  ("User created successfully")
 
 
-
 # def delete(id:int,db:Session):
 #     data=db.query(models.User).filter(models.User.id==id).delete()
 #     if not data: 

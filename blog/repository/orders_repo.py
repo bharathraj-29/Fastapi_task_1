@@ -1,7 +1,7 @@
 from fastapi import HTTPException,Depends
 from sqlalchemy.orm import Session,joinedload
 from datetime import datetime,timedelta
-import models,schemas,database
+import models,schemas,database,jwttoken
 from random import randint
 from blog import oauth2
 
@@ -11,7 +11,7 @@ def get_orders(db,current_user = Depends(oauth2.admin_required())):
     return role
 
 
-def create_order(request: schemas.orderbase,db: Session = Depends(database.get_db),current_user: models.User = Depends(oauth2.get_current_user)):
+def create_order(request: schemas.orderbase,db: Session = Depends(database.get_db),current_user: jwttoken = Depends(oauth2.get_current_user)):
     order = models.Orders(user_id=current_user.user_id,item_id=request.item_id)
     db.add(order)
     db.commit()
